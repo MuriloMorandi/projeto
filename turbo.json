@@ -2,7 +2,15 @@
     "$schema": "https://turbo.build/schema.json",
     "tasks": {
       "build": {
-        "outputs": ["dist/**"]
+        "dependsOn": ["^build"] ,
+        "outputs": ["dist/**"],
+        "cache": false
+      },
+      "test": {
+         "dependsOn": ["^build"]
+      },
+      "test:cov": {
+        "dependsOn": ["^build"]
       },
       "check-types": {
         "dependsOn": ["^check-types"]

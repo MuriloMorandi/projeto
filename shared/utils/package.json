@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "test": "vitest",
-    "test:cov": "vitest run --coverage",
+    "test": "vitest --watch",
+    "test:cov": "vitest --coverage --reporter=verbose",
     "build": "tsc -p tsconfig.json"
   },
   "license": "ISC",

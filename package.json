@@ -2,7 +2,9 @@
   "name": "projeto",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev"
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "test:cov": "turbo run test:cov"
   },
   "license": "ISC",
   "devDependencies": {
