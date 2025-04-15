@@ -16,3 +16,6 @@ jobs:
 
       - name: Setup Node.js ⚙️ - Install dependencies 
         uses: ./.github/workflows/actions/setup_node--install_dep
+      
+      - name: Build 🏗️
+        uses: pnpm build
