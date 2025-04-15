@@ -15,6 +15,5 @@ runs:
         with:
           version: '9.6.0'
         
-      # Install dependencies
-      - name: Install dependencies 🔧
+    - name: Install dependencies 🔧
         run: pnpm install
