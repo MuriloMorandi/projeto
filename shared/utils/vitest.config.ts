@@ -9,7 +9,7 @@ export default defineConfig({
             provider: 'v8',
             reporter: ['text'],
             reportsDirectory: './coverage',
-            exclude: ['__test__/**/*.test.ts', 'vitest.config.ts'],
+            exclude: ['__test__/**/*.test.ts', 'vitest.config.ts', 'dist', '**/index.ts'],
             thresholds: {
                 statements: 95,
                 functions: 95,
