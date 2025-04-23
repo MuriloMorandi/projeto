@@ -8,3 +8,7 @@ const client = createClient({
 
 export const db = drizzle(client);
 
+
+export const dbTest = drizzle(createClient({
+   url:'file:teste.db' 
+}));
