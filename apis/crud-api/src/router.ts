@@ -1,17 +1,43 @@
+import z from 'zod';
 import { publicProcedure, router } from './trpc';
+import { TRPCError } from '@trpc/server';
+import CreateUsers from './routes/users/CreateUsers';
+import listUsers from './routes/users/ListUsers';
+import { usersTable } from './database/schema';
+import { and, eq } from 'drizzle-orm';
  
+let users = [{ id: 1, nome: 'Heitor Luan da Mata', email: 'heitor_damata@teste.com' }, { id: 2, nome: 'Isis Ana Luna Souza', email: "isis.ana.souza@konzeption.com.br" }];
+
+
 export const appRouter = router({
   user: {
-    list: publicProcedure
-      .query(async () => {
-        // Retrieve users from a datasource, this is an imaginary database
-        const users = [{id:1, nome: 'Murilo Morandi'}, {id:2, nome: 'Gabriel Morandi'}]
-             
-        return {
-          data: users,
-          count: users.length 
-        };
-      }),  
+    list: listUsers,
+    get: publicProcedure
+      .input(z.object({ id: z.number() }))
+      .query(async({ input, ctx:{ db } }) => {
+
+        const user = await db.select()
+          .from(usersTable)
+          .where(and(eq(usersTable.id, input.id)))
+        
+      if (!user)
+      {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Usúario não localizado.",
+        });
+      }
+
+      return user;
+    }),
+    create: CreateUsers,
+    delete: publicProcedure.input(z.object({
+      id: z.number(),
+    })).mutation(async ({ input }) => {
+      users = users.filter(x => x.id != input.id)
+      
+    })
+    
   }
   
 });
