@@ -3,7 +3,7 @@ name: crud-api
 on:
     push: 
         paths:
-            - 'apis/crud-api/***'
+            - 'apis/crud-api/**'
 
 jobs:
     build:
