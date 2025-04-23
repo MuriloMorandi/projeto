@@ -8,8 +8,9 @@
     "start": "tsx src/index.ts",
     "build": "tsc -p tsconfig.json",
     "db:push:test": "drizzle-kit push",
-    "test": "vitest --watch",
-    "test:cov": "vitest --coverage --reporter=verbose"
+    "test": "vitest",
+    "test:cov": "vitest --coverage --reporter=verbose",
+    "test:watch": "vitest --watch"
   },
   "license": "ISC",
   "dependencies": {
