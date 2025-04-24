@@ -5,10 +5,15 @@
   "scripts": {
     "test": "vitest --watch",
     "test:cov": "vitest --coverage --reporter=verbose",
-    "build": "tsc -p tsconfig.json"
+    "build": "tsc -p tsconfig.json",
+    "format": "biome format --write",
+    "lint": "biome lint --write",
+    "check": "biome check --write"
   },
   "license": "ISC",
   "devDependencies": {
+    "@projeto/biome-config":"workspace:*",
+    "@biomejs/biome": "1.9.4",
     "@vitest/coverage-v8": "3.1.1",
     "@vitest/ui": "^3.1.1",
     "tsx": "^4.19.3",
