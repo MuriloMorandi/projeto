@@ -24,6 +24,9 @@
       },
       "lint":{
         "cache": false
+      },
+      "check":{
+        "cache": false
       }
     },
     "ui": "tui"

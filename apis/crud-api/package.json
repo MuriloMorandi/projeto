@@ -9,9 +9,9 @@
 		"build": "tsc -p tsconfig.json",
 		"db:push:test": "drizzle-kit push",
 		"test": "vitest --watch",
-		"format": "biome format --write",
-    	"lint": "biome lint --write",
-    	"check": "biome check --write"
+		"format": "biome format ",
+		"lint": "biome lint ",
+		"check": "biome check "
 	},
 	"license": "ISC",
 	"dependencies": {
@@ -23,7 +23,6 @@
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
-		"@projeto/biome-config":"workspace:*",
 		"@biomejs/biome": "1.9.4",
 		"@faker-js/faker": "^9.7.0",
 		"@types/cors": "^2.8.17",
