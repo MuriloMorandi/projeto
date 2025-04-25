@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
-import { usersTable } from "../../database/schema";
-import { publicProcedure } from "../../trpc";
-import z from "zod";
+import { usersTable } from '../../database/schema';
+import { publicProcedure } from '../../trpc';
+import z from 'zod';
 import { TRPCError } from "@trpc/server";
 
 export default publicProcedure
@@ -41,8 +41,7 @@ export default publicProcedure
                 nome: usersTable.name
             })
 
-        return {
-            data
-        }
-
-    })
+		return {
+			data,
+		};
+	});

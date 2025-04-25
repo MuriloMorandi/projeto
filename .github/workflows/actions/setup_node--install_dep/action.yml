@@ -1,10 +1,10 @@
 name: 'setup_node-install_dep'
-description: 'Setup Node.js ⚙️ - Install dependencies 🔧'
+description: 'Setup Node.js ⚙️ - Install dependencies 📦'
 
 runs:
   using: 'composite'
   steps:
-    - name: Setup Node.js ⚙️ & Cache dependencies ⚡
+    - name: Setup Node.js ⚙️
       uses: actions/setup-node@v4
       with:
         node-version: '20.x'
@@ -14,6 +14,6 @@ runs:
       with:
         version: '9.15.9'
         
-    - name: Install dependencies 🔧
+    - name: Install dependencies 📦
       run: pnpm install
       shell: bash

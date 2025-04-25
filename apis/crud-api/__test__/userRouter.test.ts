@@ -10,11 +10,10 @@ import { TRPCError } from '@trpc/server';
 type SelectUser = typeof usersTable.$inferSelect;
 
 export const createMockContext = () => {
-  return {
-    db: dbTest
-  };
+	return {
+		db: dbTest,
+	};
 };
-
 
 describe('userRouter', () => {
   let initialDatabase: SelectUser[] = [];
