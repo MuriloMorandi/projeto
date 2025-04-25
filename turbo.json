@@ -18,6 +18,15 @@
       "dev": {
         "persistent": true,
         "cache": false
+      },
+      "format":{
+        "cache": false
+      },
+      "lint":{
+        "cache": false
+      },
+      "check":{
+        "cache": false
       }
     },
     "ui": "tui"

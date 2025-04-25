@@ -9,12 +9,11 @@ export * from './router.js';
 export type ApiInputType = inferRouterInputs<AppRouterType>;
 export type ApiOutputType = inferRouterOutputs<AppRouterType>;
 
-
 const server = createHTTPServer({
-  middleware: cors(),
-  router: appRouter,
-  createContext: createContext,
+	middleware: cors(),
+	router: appRouter,
+	createContext: createContext,
 });
- 
-console.log("API(CRUD) rodando na porta: " + 3001)
+
+console.log('API(CRUD) rodando na porta: ' + 3001);
 server.listen(3001);
