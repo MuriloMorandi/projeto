@@ -7,9 +7,9 @@ import { usersTable } from './database/schema';
 import { and, eq } from 'drizzle-orm';
 
 let users = [
-	{ id: "1", nome: 'Heitor Luan da Mata', email: 'heitor_damata@teste.com' },
+	{ id: '1', nome: 'Heitor Luan da Mata', email: 'heitor_damata@teste.com' },
 	{
-		id: "2",
+		id: '2',
 		nome: 'Isis Ana Luna Souza',
 		email: 'isis.ana.souza@konzeption.com.br',
 	},
