@@ -1,25 +1,25 @@
 {
-  "name": "@projeto/utils",
-  "version": "1.0.0",
-  "description": "",
-  "scripts": {
-    "test": "vitest --watch",
-    "test:cov": "vitest --coverage --reporter=verbose",
-    "build": "tsc -p tsconfig.json",
-    "format": "biome format",
-    "lint": "biome lint",
-    "check": "biome check"
-  },
-  "license": "ISC",
-  "devDependencies": {
-    "@biomejs/biome": "1.9.4",
-    "@vitest/coverage-v8": "3.1.1",
-    "@vitest/ui": "^3.1.1",
-    "tsx": "^4.19.3",
-    "typescript": "~5.8.2",
-    "vitest": "^3.1.1"
-  },
-  "dependencies": {
-    "date-fns": "^4.1.0"
-  }
+	"name": "@projeto/utils",
+	"version": "1.0.0",
+	"description": "",
+	"scripts": {
+		"test": "vitest --watch",
+		"test:cov": "vitest --coverage --reporter=verbose",
+		"build": "tsc -p tsconfig.json",
+		"format": "biome format",
+		"lint": "biome lint",
+		"check": "biome check"
+	},
+	"license": "ISC",
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"@vitest/coverage-v8": "3.1.1",
+		"@vitest/ui": "^3.1.1",
+		"tsx": "^4.19.3",
+		"typescript": "~5.8.2",
+		"vitest": "^3.1.1"
+	},
+	"dependencies": {
+		"date-fns": "^4.1.0"
+	}
 }
