@@ -8,6 +8,7 @@
     "format": "turbo run format",
     "format:write": "turbo run format -- --write",
     "lint": "turbo run lint",
+    "lint:write": "turbo run lint -- --write",
     "check": "turbo run check",
     "check:write": "turbo run check -- --write"
   },

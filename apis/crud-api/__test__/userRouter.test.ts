@@ -1,33 +1,25 @@
-import { Context } from '../src/context';
+import type { ApiOutputType } from './../src/index';
+import type { Context } from '../src/context';
 import { dbTest } from '../src/database';
 import { usersTable } from '../src/database/schema';
 import { appRouter } from './../src/router';
-import {
-	describe,
-	it,
-	expect,
-	vi,
-	beforeAll,
-	afterAll,
-	beforeEach,
-	test,
-} from 'vitest';
+import { describe, it, expect, afterAll, beforeEach, test } from 'vitest';
 import { faker } from '@faker-js/faker';
-import { nanoid, random } from 'nanoid';
+import { nanoid } from 'nanoid';
 import { TRPCError } from '@trpc/server';
 import { eq } from 'drizzle-orm';
 
 type SelectUser = typeof usersTable.$inferSelect;
 
-export const createMockContext = () => {
+const createMockContext = () => {
 	return {
 		db: dbTest,
 	};
 };
 
 describe('userRouter', () => {
-	let initialDatabase: SelectUser[] = [];
-	Array.from({ length: 100 }).map((value, idx) => {
+	const initialDatabase: SelectUser[] = [];
+	Array.from({ length: 100 }).map(() => {
 		initialDatabase.push({
 			id: nanoid(),
 			name: faker.person.fullName(),
@@ -153,7 +145,10 @@ describe('userRouter', () => {
 			{
 				desc: 'asc por nome - página 1, 15 itens',
 				input: { orderByAsc: true, orderColumn: 'name', page: 1, pageSize: 15 },
-				sortFn: (a: any, b: any) => a.name.localeCompare(b.name),
+				sortFn: (
+					a: ApiOutputType['user']['list']['data'][0],
+					b: ApiOutputType['user']['list']['data'][0],
+				) => a.name.localeCompare(b.name),
 			},
 			{
 				desc: 'desc por nome - página 1, 15 itens',
@@ -163,12 +158,18 @@ describe('userRouter', () => {
 					page: 1,
 					pageSize: 15,
 				},
-				sortFn: (a: any, b: any) => b.name.localeCompare(a.name),
+				sortFn: (
+					a: ApiOutputType['user']['list']['data'][0],
+					b: ApiOutputType['user']['list']['data'][0],
+				) => b.name.localeCompare(a.name),
 			},
 			{
 				desc: 'asc por nome - página 2, 10 itens',
 				input: { orderByAsc: true, orderColumn: 'name', page: 2, pageSize: 10 },
-				sortFn: (a: any, b: any) => a.name.localeCompare(b.name),
+				sortFn: (
+					a: ApiOutputType['user']['list']['data'][0],
+					b: ApiOutputType['user']['list']['data'][0],
+				) => a.name.localeCompare(b.name),
 			},
 			{
 				desc: 'asc por email - página 1, 15 itens',
@@ -178,7 +179,10 @@ describe('userRouter', () => {
 					page: 1,
 					pageSize: 15,
 				},
-				sortFn: (a: any, b: any) => a.email.localeCompare(b.email),
+				sortFn: (
+					a: ApiOutputType['user']['list']['data'][0],
+					b: ApiOutputType['user']['list']['data'][0],
+				) => a.email.localeCompare(b.email),
 			},
 			{
 				desc: 'desc por email - página 1, 15 itens',
@@ -188,7 +192,10 @@ describe('userRouter', () => {
 					page: 1,
 					pageSize: 15,
 				},
-				sortFn: (a: any, b: any) => b.email.localeCompare(a.email),
+				sortFn: (
+					a: ApiOutputType['user']['list']['data'][0],
+					b: ApiOutputType['user']['list']['data'][0],
+				) => b.email.localeCompare(a.email),
 			},
 			{
 				desc: 'asc por email - página 3, `15` itens',
@@ -198,7 +205,10 @@ describe('userRouter', () => {
 					page: 3,
 					pageSize: 30,
 				},
-				sortFn: (a: any, b: any) => a.email.localeCompare(b.email),
+				sortFn: (
+					a: ApiOutputType['user']['list']['data'][0],
+					b: ApiOutputType['user']['list']['data'][0],
+				) => a.email.localeCompare(b.email),
 			},
 			{
 				desc: 'search por nome contendo "ana"',
@@ -209,8 +219,12 @@ describe('userRouter', () => {
 					pageSize: 10,
 					search: 'ana',
 				},
-				sortFn: (a: any, b: any) => a.name.localeCompare(b.name),
-				filterFn: (item: any) => item.name.toLowerCase().includes('ana'),
+				sortFn: (
+					a: ApiOutputType['user']['list']['data'][0],
+					b: ApiOutputType['user']['list']['data'][0],
+				) => a.name.localeCompare(b.name),
+				filterFn: (item: ApiOutputType['user']['list']['data'][0]) =>
+					item.name.toLowerCase().includes('ana'),
 			},
 			{
 				desc: 'search por email contendo "@gmail.com"',
@@ -221,8 +235,11 @@ describe('userRouter', () => {
 					pageSize: 10,
 					search: '@gmail.com',
 				},
-				sortFn: (a: any, b: any) => a.email.localeCompare(b.email),
-				filterFn: (item: any) =>
+				sortFn: (
+					a: ApiOutputType['user']['list']['data'][0],
+					b: ApiOutputType['user']['list']['data'][0],
+				) => a.email.localeCompare(b.email),
+				filterFn: (item: ApiOutputType['user']['list']['data'][0]) =>
 					item.email.toLowerCase().includes('@gmail.com'),
 			},
 		])(

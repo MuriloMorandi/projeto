@@ -23,9 +23,6 @@ jobs:
 
       - name: Run Biome format check 🔍
         run: pnpm format
-
-      - name: Run Biome lint check 🔍
-        run: pnpm lint
   
   check-lint:
     name: 🧹 Biome Lint Check
