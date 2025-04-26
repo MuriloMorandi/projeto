@@ -18,8 +18,8 @@ export default publicProcedure
 		const { orderByAsc, orderColumn, page, pageSize } = input;
 
 		const orderDynamicColumn = <SQLiteColumn>(
-      		usersTable[<keyof typeof usersTable>orderColumn]
-    	);
+			usersTable[<keyof typeof usersTable>orderColumn]
+		);
 
 		const data = await db
 			.select()
@@ -32,11 +32,7 @@ export default publicProcedure
 					),
 				),
 			)
-			.orderBy(
-				orderByAsc
-					? asc(orderDynamicColumn)
-					: desc(orderDynamicColumn),
-			)
+			.orderBy(orderByAsc ? asc(orderDynamicColumn) : desc(orderDynamicColumn))
 			.limit(pageSize)
 			.offset((page - 1) * pageSize);
 
