@@ -2,7 +2,7 @@ import { and, asc, count, desc, like, or } from 'drizzle-orm';
 import { usersTable } from '../../database/schema';
 import { publicProcedure } from '../../trpc';
 import z from 'zod';
-import { SQLiteColumn } from 'drizzle-orm/sqlite-core';
+import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
 
 export default publicProcedure
 	.input(

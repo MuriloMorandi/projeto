@@ -10,7 +10,7 @@
 		"db:push:test": "drizzle-kit push",
 		"test": "vitest",
 		"test:cov": "vitest --coverage --reporter=verbose",
-		"test:watch": "vitest --watch",
+		"test:watch": "vitest",
 		"format": "biome format",
 		"lint": "biome lint",
 		"check": "biome check"

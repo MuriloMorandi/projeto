@@ -3,7 +3,8 @@
 	"version": "1.0.0",
 	"description": "",
 	"scripts": {
-		"test": "vitest --watch",
+		"test": "vitest",
+		"test:watch": "vitest --watch",
 		"test:cov": "vitest --coverage --reporter=verbose",
 		"build": "tsc -p tsconfig.json",
 		"format": "biome format",

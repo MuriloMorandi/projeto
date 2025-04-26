@@ -5,6 +5,6 @@ export default defineConfig({
 	out: './migrations',
 	dialect: 'turso',
 	dbCredentials: {
-		url: `file:teste.db`,
+		url: 'file:teste.db',
 	},
 });
