@@ -11,6 +11,11 @@ import {
 	afterAll,
 	beforeEach,
 } from 'vitest';
+import { faker } from '@faker-js/faker';
+import { nanoid } from 'nanoid';
+import { TRPCError } from '@trpc/server';
+
+type SelectUser = typeof usersTable.$inferSelect;
 
 export const createMockContext = () => {
 	return {
@@ -18,38 +23,114 @@ export const createMockContext = () => {
 	};
 };
 
-describe('banco vazio', () => {
-	it('deve retornar um array vazio e count igual a 0', async () => {
-		const ctx = createMockContext() as unknown as Context;
-		const caller = appRouter.createCaller(ctx);
-
-		const result = await caller.user.list();
-
-		expect(result.data).toStrictEqual([]);
-		expect(result.count).toEqual(0);
-	});
-});
-
 describe('userRouter', () => {
-	const initialDatabase = [
-		{
-			id: 1,
-			name: 'a',
-			email: 'abc@gmail.com',
-		},
-	];
-	beforeEach(async () => {
-		const ctx = createMockContext() as unknown as Context;
-		await ctx.db.insert(usersTable).values(initialDatabase);
+	let initialDatabase: SelectUser[] = [];
+	Array.from({ length: 100 }).map((value, idx) => {
+		initialDatabase.push({
+			email: faker.internet.email(),
+			name: faker.person.fullName(),
+			id: nanoid(),
+		});
 	});
 
-	it('deve retornar um array com usuarios é o total de usuarios cadastros', async () => {
-		const ctx = createMockContext() as unknown as Context;
-		const caller = appRouter.createCaller(ctx);
+	describe('List', () => {
+		let isFirstTestDone = false;
 
-		const result = await caller.user.list();
+		beforeEach(async () => {
+			if (!isFirstTestDone) return;
 
-		expect(result.data).toStrictEqual(initialDatabase);
-		expect(result.count).toEqual(initialDatabase.length);
+			const ctx = createMockContext() as unknown as Context;
+			await ctx.db.insert(usersTable).values(initialDatabase);
+		});
+
+		it('Valida retorno da API', async () => {
+			const ctx = createMockContext() as unknown as Context;
+			const caller = appRouter.createCaller(ctx);
+
+			const result = await caller.user.list();
+
+			expect(result.data).toStrictEqual([]);
+			expect(result.count).toEqual(0);
+			isFirstTestDone = true;
+		});
+
+		it('Deve retornar os dados cadastrados seguindo a ordenação', async () => {
+			const ctx = createMockContext() as unknown as Context;
+			const caller = appRouter.createCaller(ctx);
+
+			const result = await caller.user.list();
+			const expectData = initialDatabase.sort((a, b) =>
+				a.name.localeCompare(b.name),
+			);
+
+			expect(result.data).toMatchObject(expectData);
+			expect(result.count).toEqual(initialDatabase.length);
+		});
+	});
+
+	describe('Cadastro', () => {
+		it('Cadastro com sucesso', async () => {
+			const ctx = createMockContext() as unknown as Context;
+			const caller = appRouter.createCaller(ctx);
+
+			const newUser = {
+				email: faker.internet.email(),
+				name: faker.person.fullName(),
+			};
+
+			const { data } = await caller.user.create(newUser);
+			const findNewUser = await caller.user.get({ id: data[0].id });
+
+			expect(data[0]).toHaveProperty('id');
+			expect(findNewUser).toMatchObject(newUser);
+		});
+
+		it('Email inválido', async () => {
+			const ctx = createMockContext() as unknown as Context;
+			const caller = appRouter.createCaller(ctx);
+
+			const newUser = {
+				email: faker.person.firstName(),
+				name: faker.person.fullName(),
+			};
+
+			try {
+				await caller.user.create(newUser);
+				throw new Error('Não deveria chegar aqui');
+			} catch (err) {
+				expect(err).toBeInstanceOf(TRPCError);
+				expect(err.code).toBe('BAD_REQUEST');
+
+				const message = JSON.parse((err as TRPCError).message);
+				expect(Array.isArray(message)).toBe(true);
+
+				expect(message[0]).toMatchObject({
+					code: 'invalid_string',
+					validation: 'email',
+					path: ['email'],
+					message: 'Invalid email',
+				});
+			}
+		});
+
+		it('Email duplicado', async () => {
+			const ctx = createMockContext() as unknown as Context;
+			const caller = appRouter.createCaller(ctx);
+
+			const newUser = {
+				email: faker.internet.email(),
+				name: faker.person.fullName(),
+			};
+
+			try {
+				await caller.user.create(newUser);
+				await caller.user.create(newUser);
+				throw new Error('Não deveria chegar aqui');
+			} catch (err) {
+				expect(err).toBeInstanceOf(TRPCError);
+				expect(err.code).toBe('BAD_REQUEST');
+				expect(err.message).toEqual('E-mail já cadastrado');
+			}
+		});
 	});
 });
