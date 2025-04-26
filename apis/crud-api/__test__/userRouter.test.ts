@@ -10,11 +10,12 @@ import {
 	beforeAll,
 	afterAll,
 	beforeEach,
+	test,
 } from 'vitest';
 import { fa, faker } from '@faker-js/faker';
-import { nanoid } from 'nanoid';
+import { nanoid, random } from 'nanoid';
 import { TRPCError } from '@trpc/server';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 
 type SelectUser = typeof usersTable.$inferSelect;
 
@@ -36,6 +37,10 @@ describe('userRouter', () => {
 
 	describe('Validando o retorno da API', () => { 
 		const ctx = createMockContext() as unknown as Context;
+
+		beforeEach(async () => {
+			await ctx.db.delete(usersTable).execute();
+		});
 		
 		it('Cadastro', async () => {
 			const userInsert = {
@@ -48,6 +53,25 @@ describe('userRouter', () => {
 			expect(result).toHaveProperty('id');
 			expect(result).toHaveProperty('name');
 			expect(result).toHaveProperty('email');
+		});
+
+		it('Cadastro (Email duplicado)', async () => {
+			const caller = appRouter.createCaller(ctx);
+
+			const newUser = {
+				email: faker.internet.email(),
+				name: faker.person.fullName(),
+			};
+
+			try {
+				await caller.user.create(newUser);
+				await caller.user.create(newUser);
+				expect.fail('Não deveria chegar aqui');
+			} catch (err) {
+				expect(err).toBeInstanceOf(TRPCError);
+				expect(err.code).toBe('BAD_REQUEST');
+				expect(err.message).toEqual('E-mail já cadastrado');
+			}
 		});
 
 		it('Atualização', async () => {
@@ -66,7 +90,12 @@ describe('userRouter', () => {
 		it('List', async () => {
 			const caller = appRouter.createCaller(ctx);
 
-			const result = await caller.user.list();
+			const result = await caller.user.list({
+				orderByAsc: true,
+				orderColumn: 'name',
+				page: 1,
+				pageSize: 15,
+			});
 			expect(result.data).toStrictEqual([]);
 			expect(result.count).toEqual(0);
 		});
@@ -87,10 +116,14 @@ describe('userRouter', () => {
 
 		it('Busca por id (não localizado)', async () => {
 			const caller = appRouter.createCaller(ctx);
+			try {
+				await caller.user.get({ id: initialDatabase[0].id })
+			} catch (error) {
+				expect(error).toBeInstanceOf(TRPCError);
+				expect((error as TRPCError).code).toBe('BAD_REQUEST');
+				expect((error as TRPCError).message).toEqual('Usúario não localizado.');
+			}
 			
-			await expect(
-    			caller.user.get({ id: initialDatabase[0].id })
-  			).rejects.toThrow('Usuário não localizado.');
 		});
 
 		it('Delete by id', async () => {
@@ -117,22 +150,81 @@ describe('userRouter', () => {
 			await ctx.db.insert(usersTable).values(initialDatabase);
 		});
 
-		it('Deve retornar os dados cadastrados seguindo a ordenação', async () => {
+		test.each([
+			{
+				desc: 'asc por nome - página 1, 15 itens',
+				input: { orderByAsc: true, orderColumn: 'name', page: 1, pageSize: 15 },
+				sortFn: (a: any, b: any) => a.name.localeCompare(b.name),
+			},
+			{
+				desc: 'desc por nome - página 1, 15 itens',
+				input: { orderByAsc: false, orderColumn: 'name', page: 1, pageSize: 15 },
+				sortFn: (a: any, b: any) => b.name.localeCompare(a.name),
+			},
+			{
+				desc: 'asc por nome - página 2, 10 itens',
+				input: { orderByAsc: true, orderColumn: 'name', page: 2, pageSize: 10 },
+				sortFn: (a: any, b: any) => a.name.localeCompare(b.name),
+			},
+			{
+				desc: 'asc por email - página 1, 15 itens',
+				input: { orderByAsc: true, orderColumn: 'email', page: 1, pageSize: 15 },
+				sortFn: (a: any, b: any) => a.email.localeCompare(b.email),
+			},
+			{
+				desc: 'desc por email - página 1, 15 itens',
+				input: { orderByAsc: false, orderColumn: 'email', page: 1, pageSize: 15 },
+				sortFn: (a: any, b: any) => b.email.localeCompare(a.email),
+			},
+			{
+				desc: 'asc por email - página 3, `15` itens',
+				input: { orderByAsc: true, orderColumn: 'email', page: 3, pageSize: 30 },
+				sortFn: (a: any, b: any) => a.email.localeCompare(b.email),
+			},
+			{
+				desc: 'search por nome contendo "ana"',
+				input: { orderByAsc: true, orderColumn: 'name', page: 1, pageSize: 10, search: 'ana' },
+				sortFn: (a: any, b: any) => a.name.localeCompare(b.name),
+				filterFn: (item: any) => item.name.toLowerCase().includes('ana'),
+			},
+			{
+				desc: 'search por email contendo "@gmail.com"',
+				input: { orderByAsc: true, orderColumn: 'email', page: 1, pageSize: 10, search: '@gmail.com' },
+				sortFn: (a: any, b: any) => a.email.localeCompare(b.email),
+				filterFn: (item: any) => item.email.toLowerCase().includes('@gmail.com'),
+			},
+		])('Deve retornar os dados cadastrados seguindo a ordenação: $desc', async ({ input, sortFn}) => {
 			const caller = appRouter.createCaller(ctx);
 
-			const result = await caller.user.list();
-			const expectData = initialDatabase.sort((a, b) =>
-				a.name.localeCompare(b.name),
+			const result = await caller.user.list(input);
+			
+			let filteredData = initialDatabase;
+			if (input.search)
+			{
+				filteredData = initialDatabase.filter((item) => { 
+					return item.email.toLowerCase().includes(input.search.toLowerCase()) || item.name.toLowerCase().includes(input.search.toLowerCase())
+				})
+			}
+
+			const expectData = filteredData.sort(sortFn).slice(
+				((input.page - 1) * input.pageSize),
+				((input.page - 1) * input.pageSize) + input.pageSize
 			);
 
 			expect(result.data).toMatchObject(expectData);
-			expect(result.count).toEqual(initialDatabase.length);
+			expect(result.count).toEqual(filteredData.length);
 		});
 	});
 
 	describe('Cadastro', () => {
+		const ctx = createMockContext() as unknown as Context;
+
+		beforeEach(async () => {
+			await ctx.db.delete(usersTable).execute();
+			await ctx.db.insert(usersTable).values(initialDatabase);
+		});
+
 		it('Cadastro com sucesso', async () => {
-			const ctx = createMockContext() as unknown as Context;
 			const caller = appRouter.createCaller(ctx);
 
 			const newUser = {
@@ -140,15 +232,16 @@ describe('userRouter', () => {
 				name: faker.person.fullName(),
 			};
 
-			const { data } = await caller.user.create(newUser);
-			const findNewUser = await caller.user.get({ id: data[0].id });
+			const data = await caller.user.create(newUser);
+			const findNewUser =  await ctx.db.query.usersTable.findFirst({
+				where: eq(usersTable.id, data.id),
+			});
 
-			expect(data[0]).toHaveProperty('id');
+			expect(data).toHaveProperty('id');
 			expect(findNewUser).toMatchObject(newUser);
 		});
 
 		it('Email inválido', async () => {
-			const ctx = createMockContext() as unknown as Context;
 			const caller = appRouter.createCaller(ctx);
 
 			const newUser = {
@@ -158,7 +251,7 @@ describe('userRouter', () => {
 
 			try {
 				await caller.user.create(newUser);
-				throw new Error('Não deveria chegar aqui');
+				expect.fail('Não deveria chegar aqui');
 			} catch (err) {
 				expect(err).toBeInstanceOf(TRPCError);
 				expect(err.code).toBe('BAD_REQUEST');
@@ -174,27 +267,114 @@ describe('userRouter', () => {
 				});
 			}
 		});
+		
+	});
 
-		it('Email duplicado', async () => {
-			const ctx = createMockContext() as unknown as Context;
+	describe('Atualização', () => {
+		const ctx = createMockContext() as unknown as Context;
+
+		beforeEach(async () => {
+			await ctx.db.delete(usersTable).execute();
+			await ctx.db.insert(usersTable).values(initialDatabase);
+		});
+
+		it('Atualização com sucesso (E-mail)', async () => {
 			const caller = appRouter.createCaller(ctx);
 
-			const newUser = {
+			const numberRandom = Math.floor(Math.random() * initialDatabase.length);
+
+			const randomUser = initialDatabase[numberRandom];
+
+			const updatedUser = {
+				id: randomUser.id,
 				email: faker.internet.email(),
+				name: randomUser.name,
+			};
+
+			const data = await caller.user.update(updatedUser);
+			const findUpdatedUser =  await ctx.db.query.usersTable.findFirst({
+				where: eq(usersTable.id, data.id),
+			});
+
+			expect(data).toHaveProperty('id');
+			expect(findUpdatedUser).toMatchObject(updatedUser);
+			expect(findUpdatedUser).not.toMatchObject(randomUser);
+		});
+
+		it('Atualização com sucesso (name)', async () => {
+			const caller = appRouter.createCaller(ctx);
+
+			const numberRandom = Math.floor(Math.random() * initialDatabase.length);
+
+			const randomUser = initialDatabase[numberRandom];
+
+			const updatedUser = {
+				id: randomUser.id,
+				email: randomUser.email,
 				name: faker.person.fullName(),
 			};
 
+			const data = await caller.user.update(updatedUser);
+			const findUpdatedUser =  await ctx.db.query.usersTable.findFirst({
+				where: eq(usersTable.id, data.id),
+			});
+
+			expect(data).toHaveProperty('id');
+			expect(findUpdatedUser).toMatchObject(updatedUser);
+			expect(findUpdatedUser).not.toMatchObject(randomUser);
+		});
+
+		it('Email inválido', async () => {
+			const caller = appRouter.createCaller(ctx);
+
+			const numberRandom = Math.floor(Math.random() * initialDatabase.length);
+
+			const randomUser = initialDatabase[numberRandom];
+			const updatedUser = {
+				id: randomUser.id,
+				email: faker.person.firstName(),
+				name: randomUser.name,
+			};
+
 			try {
-				await caller.user.create(newUser);
-				await caller.user.create(newUser);
-				throw new Error('Não deveria chegar aqui');
+				await caller.user.update(updatedUser);
+				expect.fail('Não deveria chegar aqui');
 			} catch (err) {
 				expect(err).toBeInstanceOf(TRPCError);
 				expect(err.code).toBe('BAD_REQUEST');
-				expect(err.message).toEqual('E-mail já cadastrado');
+
+				const message = JSON.parse((err as TRPCError).message);
+				expect(Array.isArray(message)).toBe(true);
+
+				expect(message[0]).toMatchObject({
+					code: 'invalid_string',
+					validation: 'email',
+					path: ['email'],
+					message: 'Invalid email',
+				});
 			}
 		});
+		
 	});
 
+	describe('Delete', () => {
+		const ctx = createMockContext() as unknown as Context;
+
+		it('Deletar com sucesso', async () => {
+			const caller = appRouter.createCaller(ctx);
+
+			const numberRandom = Math.floor(Math.random() * initialDatabase.length);
+
+			const randomUser = initialDatabase[numberRandom];
+
+			await caller.user.delete({ id: randomUser.id });
+
+			const findDeletedUser = await ctx.db.query.usersTable.findFirst({
+				where: eq(usersTable.id, randomUser.id),
+			});
+
+			expect(findDeletedUser).toBeUndefined();
+		});
+	});
 
 });
