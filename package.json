@@ -6,8 +6,10 @@
     "test": "turbo run test",
     "test:cov": "turbo run test:cov",
     "format": "turbo run format",
+    "format:write": "turbo run format -- --write",
     "lint": "turbo run lint",
-    "check": "turbo run check"
+    "check": "turbo run check",
+    "check:write": "turbo run check -- --write"
   },
   "license": "ISC",
   "devDependencies": {

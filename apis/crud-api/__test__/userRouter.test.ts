@@ -35,19 +35,19 @@ describe('userRouter', () => {
 		});
 	});
 
-	describe('Validando o retorno da API', () => { 
+	describe('Validando o retorno da API', () => {
 		const ctx = createMockContext() as unknown as Context;
 
 		beforeEach(async () => {
 			await ctx.db.delete(usersTable).execute();
 		});
-		
+
 		it('Cadastro', async () => {
 			const userInsert = {
 				email: faker.internet.email(),
 				name: faker.person.fullName(),
 			};
-			
+
 			const caller = appRouter.createCaller(ctx);
 			const result = await caller.user.create(userInsert);
 			expect(result).toHaveProperty('id');
@@ -79,7 +79,7 @@ describe('userRouter', () => {
 				email: faker.internet.email(),
 				name: faker.person.fullName(),
 			};
-			
+
 			const caller = appRouter.createCaller(ctx);
 			const result = await caller.user.create(userInsert);
 			expect(result).toHaveProperty('id');
@@ -105,9 +105,9 @@ describe('userRouter', () => {
 			await ctx.db.insert(usersTable).values(userInsert).execute();
 
 			const caller = appRouter.createCaller(ctx);
-			
-			const findUser =await caller.user.get({ id: userInsert.id });
-			
+
+			const findUser = await caller.user.get({ id: userInsert.id });
+
 			expect(findUser).toMatchObject(userInsert);
 			expect(findUser).toHaveProperty('id');
 			expect(findUser).toHaveProperty('name');
@@ -117,13 +117,12 @@ describe('userRouter', () => {
 		it('Busca por id (não localizado)', async () => {
 			const caller = appRouter.createCaller(ctx);
 			try {
-				await caller.user.get({ id: initialDatabase[0].id })
+				await caller.user.get({ id: initialDatabase[0].id });
 			} catch (error) {
 				expect(error).toBeInstanceOf(TRPCError);
 				expect((error as TRPCError).code).toBe('BAD_REQUEST');
 				expect((error as TRPCError).message).toEqual('Usúario não localizado.');
 			}
-			
 		});
 
 		it('Delete by id', async () => {
@@ -131,20 +130,20 @@ describe('userRouter', () => {
 			await ctx.db.insert(usersTable).values(userInsert).execute();
 
 			const caller = appRouter.createCaller(ctx);
-			
+
 			await caller.user.delete({ id: userInsert.id });
-			
+
 			const findUser = await ctx.db.query.usersTable.findFirst({
 				where: eq(usersTable.id, userInsert.id),
 			});
-			
+
 			expect(findUser).toBeUndefined();
 		});
 	});
 
 	describe('List', () => {
 		const ctx = createMockContext() as unknown as Context;
-		
+
 		beforeEach(async () => {
 			await ctx.db.delete(usersTable).execute();
 			await ctx.db.insert(usersTable).values(initialDatabase);
@@ -158,7 +157,12 @@ describe('userRouter', () => {
 			},
 			{
 				desc: 'desc por nome - página 1, 15 itens',
-				input: { orderByAsc: false, orderColumn: 'name', page: 1, pageSize: 15 },
+				input: {
+					orderByAsc: false,
+					orderColumn: 'name',
+					page: 1,
+					pageSize: 15,
+				},
 				sortFn: (a: any, b: any) => b.name.localeCompare(a.name),
 			},
 			{
@@ -168,51 +172,86 @@ describe('userRouter', () => {
 			},
 			{
 				desc: 'asc por email - página 1, 15 itens',
-				input: { orderByAsc: true, orderColumn: 'email', page: 1, pageSize: 15 },
+				input: {
+					orderByAsc: true,
+					orderColumn: 'email',
+					page: 1,
+					pageSize: 15,
+				},
 				sortFn: (a: any, b: any) => a.email.localeCompare(b.email),
 			},
 			{
 				desc: 'desc por email - página 1, 15 itens',
-				input: { orderByAsc: false, orderColumn: 'email', page: 1, pageSize: 15 },
+				input: {
+					orderByAsc: false,
+					orderColumn: 'email',
+					page: 1,
+					pageSize: 15,
+				},
 				sortFn: (a: any, b: any) => b.email.localeCompare(a.email),
 			},
 			{
 				desc: 'asc por email - página 3, `15` itens',
-				input: { orderByAsc: true, orderColumn: 'email', page: 3, pageSize: 30 },
+				input: {
+					orderByAsc: true,
+					orderColumn: 'email',
+					page: 3,
+					pageSize: 30,
+				},
 				sortFn: (a: any, b: any) => a.email.localeCompare(b.email),
 			},
 			{
 				desc: 'search por nome contendo "ana"',
-				input: { orderByAsc: true, orderColumn: 'name', page: 1, pageSize: 10, search: 'ana' },
+				input: {
+					orderByAsc: true,
+					orderColumn: 'name',
+					page: 1,
+					pageSize: 10,
+					search: 'ana',
+				},
 				sortFn: (a: any, b: any) => a.name.localeCompare(b.name),
 				filterFn: (item: any) => item.name.toLowerCase().includes('ana'),
 			},
 			{
 				desc: 'search por email contendo "@gmail.com"',
-				input: { orderByAsc: true, orderColumn: 'email', page: 1, pageSize: 10, search: '@gmail.com' },
+				input: {
+					orderByAsc: true,
+					orderColumn: 'email',
+					page: 1,
+					pageSize: 10,
+					search: '@gmail.com',
+				},
 				sortFn: (a: any, b: any) => a.email.localeCompare(b.email),
-				filterFn: (item: any) => item.email.toLowerCase().includes('@gmail.com'),
+				filterFn: (item: any) =>
+					item.email.toLowerCase().includes('@gmail.com'),
 			},
-		])('Deve retornar os dados cadastrados seguindo a ordenação: $desc', async ({ input, sortFn}) => {
-			const caller = appRouter.createCaller(ctx);
+		])(
+			'Deve retornar os dados cadastrados seguindo a ordenação: $desc',
+			async ({ input, sortFn }) => {
+				const caller = appRouter.createCaller(ctx);
 
-			const result = await caller.user.list(input);
-			
-			let filteredData = initialDatabase;
-			if (input.search)
-			{
-				filteredData = initialDatabase.filter((item) => { 
-					return item.email.toLowerCase().includes(input.search.toLowerCase()) || item.name.toLowerCase().includes(input.search.toLowerCase())
-				})
-			}
+				const result = await caller.user.list(input);
 
-			const expectData = filteredData.sort(sortFn).slice(
-				((input.page - 1) * input.pageSize),
-				((input.page - 1) * input.pageSize) + input.pageSize
-			);
-			expect(result.data).toStrictEqual(expectData);
-			expect(result.count).toEqual(filteredData.length);
-		});
+				let filteredData = initialDatabase;
+				if (input.search) {
+					filteredData = initialDatabase.filter((item) => {
+						return (
+							item.email.toLowerCase().includes(input.search.toLowerCase()) ||
+							item.name.toLowerCase().includes(input.search.toLowerCase())
+						);
+					});
+				}
+
+				const expectData = filteredData
+					.sort(sortFn)
+					.slice(
+						(input.page - 1) * input.pageSize,
+						(input.page - 1) * input.pageSize + input.pageSize,
+					);
+				expect(result.data).toStrictEqual(expectData);
+				expect(result.count).toEqual(filteredData.length);
+			},
+		);
 	});
 
 	describe('Cadastro', () => {
@@ -232,7 +271,7 @@ describe('userRouter', () => {
 			};
 
 			const data = await caller.user.create(newUser);
-			const findNewUser =  await ctx.db.query.usersTable.findFirst({
+			const findNewUser = await ctx.db.query.usersTable.findFirst({
 				where: eq(usersTable.id, data.id),
 			});
 
@@ -266,7 +305,6 @@ describe('userRouter', () => {
 				});
 			}
 		});
-		
 	});
 
 	describe('Atualização', () => {
@@ -291,7 +329,7 @@ describe('userRouter', () => {
 			};
 
 			const data = await caller.user.update(updatedUser);
-			const findUpdatedUser =  await ctx.db.query.usersTable.findFirst({
+			const findUpdatedUser = await ctx.db.query.usersTable.findFirst({
 				where: eq(usersTable.id, data.id),
 			});
 
@@ -314,7 +352,7 @@ describe('userRouter', () => {
 			};
 
 			const data = await caller.user.update(updatedUser);
-			const findUpdatedUser =  await ctx.db.query.usersTable.findFirst({
+			const findUpdatedUser = await ctx.db.query.usersTable.findFirst({
 				where: eq(usersTable.id, data.id),
 			});
 
@@ -353,7 +391,6 @@ describe('userRouter', () => {
 				});
 			}
 		});
-		
 	});
 
 	describe('Delete', () => {
