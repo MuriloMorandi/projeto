@@ -210,8 +210,7 @@ describe('userRouter', () => {
 				((input.page - 1) * input.pageSize),
 				((input.page - 1) * input.pageSize) + input.pageSize
 			);
-
-			expect(result.data).toMatchObject(expectData);
+			expect(result.data).toStrictEqual(expectData);
 			expect(result.count).toEqual(filteredData.length);
 		});
 	});
@@ -377,4 +376,7 @@ describe('userRouter', () => {
 		});
 	});
 
+	afterAll(async () => {
+		await dbTest.delete(usersTable).execute();
+	});
 });
