@@ -1,7 +1,7 @@
 import { db } from './database';
 
 export const createContext = () => ({
-  db,
+	db,
 });
 
 export type Context = Awaited<ReturnType<typeof createContext>>;

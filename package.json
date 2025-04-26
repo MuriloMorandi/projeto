@@ -4,7 +4,10 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "test": "turbo run test",
-    "test:cov": "turbo run test:cov"
+    "test:cov": "turbo run test:cov",
+    "format": "turbo run format",
+    "lint": "turbo run lint",
+    "check": "turbo run check"
   },
   "license": "ISC",
   "devDependencies": {

@@ -3,6 +3,6 @@ import { nanoid } from 'nanoid';
 
 export const usersTable = sqliteTable('users', {
   id: text().primaryKey().$defaultFn(() => nanoid()),
-  name: text().notNull(),  
+  name: text().notNull(),
   email: text().unique().notNull(),
 });

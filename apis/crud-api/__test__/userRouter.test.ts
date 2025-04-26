@@ -2,7 +2,15 @@ import { Context } from '../src/context';
 import { dbTest } from '../src/database';
 import { usersTable } from '../src/database/schema';
 import { appRouter } from './../src/router';
-import { describe, it, expect, vi, beforeAll, afterAll, beforeEach } from 'vitest';
+import {
+	describe,
+	it,
+	expect,
+	vi,
+	beforeAll,
+	afterAll,
+	beforeEach,
+} from 'vitest';
 import { faker } from '@faker-js/faker';
 import { nanoid } from 'nanoid';
 import { TRPCError } from '@trpc/server';
@@ -10,11 +18,10 @@ import { TRPCError } from '@trpc/server';
 type SelectUser = typeof usersTable.$inferSelect;
 
 export const createMockContext = () => {
-  return {
-    db: dbTest
-  };
+	return {
+		db: dbTest,
+	};
 };
-
 
 describe('userRouter', () => {
   let initialDatabase: SelectUser[] = [];

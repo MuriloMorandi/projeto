@@ -15,4 +15,4 @@ export const appRouter = router({
 	},
 });
 
-export type AppRouterType = typeof appRouter
+export type AppRouterType = typeof appRouter;
