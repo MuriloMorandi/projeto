@@ -2,6 +2,7 @@ import { and, asc, count, desc, like, or } from 'drizzle-orm';
 import { usersTable } from '../../database/schema';
 import { publicProcedure } from '../../trpc';
 import z from 'zod';
+import { SQLiteColumn } from 'drizzle-orm/sqlite-core';
 
 export default publicProcedure
 	.input(
@@ -16,6 +17,10 @@ export default publicProcedure
 	.query(async ({ ctx: { db }, input }) => {
 		const { orderByAsc, orderColumn, page, pageSize } = input;
 
+		const orderDynamicColumn = <SQLiteColumn>(
+      		usersTable[<keyof typeof usersTable>orderColumn]
+    	);
+
 		const data = await db
 			.select()
 			.from(usersTable)
@@ -29,8 +34,8 @@ export default publicProcedure
 			)
 			.orderBy(
 				orderByAsc
-					? asc(usersTable[orderColumn])
-					: desc(usersTable[orderColumn]),
+					? asc(orderDynamicColumn)
+					: desc(orderDynamicColumn),
 			)
 			.limit(pageSize)
 			.offset((page - 1) * pageSize);
