@@ -22,5 +22,5 @@ export default publicProcedure
             });
         }
 
-        return user;
+         return user;
 });

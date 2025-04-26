@@ -31,18 +31,19 @@ export default publicProcedure
             });
         }
 
-        const data = await db.insert(usersTable)
-            .values({
-                email: input.email,
-                name: input.name
-            }).returning({
-                id: usersTable.id,
-                email: usersTable.email,
-                nome: usersTable.name
-            })
+		const [data] = await db
+			.insert(usersTable)
+			.values({
+				email: input.email,
+				name: input.name,
+			})
+			.returning({
+				id: usersTable.id,
+				email: usersTable.email,
+				name: usersTable.name,
+			});
 
-        return {
-            data
-        }
-
-    })
+		return {
+			...data,
+		};
+	});
