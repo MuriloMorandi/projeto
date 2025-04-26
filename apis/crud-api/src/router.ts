@@ -1,45 +1,18 @@
-import z from 'zod';
-import { publicProcedure, router } from './trpc';
-import { TRPCError } from '@trpc/server';
+import { router } from './trpc';
 import CreateUsers from './routes/users/CreateUsers';
 import listUsers from './routes/users/ListUsers';
-import { usersTable } from './database/schema';
-import { and, eq } from 'drizzle-orm';
- 
-let users = [{ id: 1, nome: 'Heitor Luan da Mata', email: 'heitor_damata@teste.com' }, { id: 2, nome: 'Isis Ana Luna Souza', email: "isis.ana.souza@konzeption.com.br" }];
-
+import UpdateUsers from './routes/users/UpdateUsers';
+import DeleteUsers from './routes/users/DeleteUsers';
+import GetUsers from './routes/users/GetUsers';
 
 export const appRouter = router({
-  user: {
-    list: listUsers,
-    get: publicProcedure
-      .input(z.object({ id: z.number() }))
-      .query(async({ input, ctx:{ db } }) => {
-
-        const user = await db.select()
-          .from(usersTable)
-          .where(and(eq(usersTable.id, input.id)))
-        
-      if (!user)
-      {
-        throw new TRPCError({
-          code: "BAD_REQUEST",
-          message: "Usúario não localizado.",
-        });
-      }
-
-      return user;
-    }),
-    create: CreateUsers,
-    delete: publicProcedure.input(z.object({
-      id: z.number(),
-    })).mutation(async ({ input }) => {
-      users = users.filter(x => x.id != input.id)
-      
-    })
-    
-  }
-  
+	user: {
+		list: listUsers,
+		get: GetUsers,
+		create: CreateUsers,
+		update: UpdateUsers,
+		delete: DeleteUsers,
+	},
 });
 
-export type AppRouterType = typeof appRouter
+export type AppRouterType = typeof appRouter;
