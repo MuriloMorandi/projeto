@@ -12,10 +12,10 @@ import {
 	beforeEach,
 	test,
 } from 'vitest';
-import { fa, faker } from '@faker-js/faker';
+import { faker } from '@faker-js/faker';
 import { nanoid, random } from 'nanoid';
 import { TRPCError } from '@trpc/server';
-import { desc, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 
 type SelectUser = typeof usersTable.$inferSelect;
 
