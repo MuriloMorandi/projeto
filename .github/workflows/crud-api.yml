@@ -4,6 +4,8 @@ on:
   push: 
     paths:
       - 'apis/crud-api/**'
+    branches-ignore:
+      - 'master'
 
 jobs:
     build:
