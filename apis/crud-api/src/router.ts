@@ -11,7 +11,7 @@ export const appRouter = router({
 		get: GetUsers,
 		create: CreateUsers,
 		update: UpdateUsers,
-		delete: DeleteUsers
+		delete: DeleteUsers,
 	},
 });
 

@@ -9,11 +9,11 @@
 		"build": "tsc -p tsconfig.json",
 		"db:push:test": "drizzle-kit push",
 		"test": "vitest",
-    	"test:cov": "vitest --coverage --reporter=verbose",
-    	"test:watch": "vitest --watch",
-		"format": "biome format ",
-		"lint": "biome lint ",
-		"check": "biome check "
+		"test:cov": "vitest --coverage --reporter=verbose",
+		"test:watch": "vitest --watch",
+		"format": "biome format",
+		"lint": "biome lint",
+		"check": "biome check"
 	},
 	"license": "ISC",
 	"dependencies": {
@@ -21,9 +21,8 @@
 		"@trpc/server": "^11.1.0",
 		"cors": "^2.8.5",
 		"drizzle-orm": "^0.42.0",
-    	"nanoid": "^5.1.5",
-		"sqlite3": "^5.1.7",
-		"zod": "^3.24.2"
+		"nanoid": "^5.1.5",
+		"zod": "^3.24.3"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
