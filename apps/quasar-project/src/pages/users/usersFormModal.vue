@@ -1,7 +1,7 @@
 <template>
   <q-dialog ref="dialogRef" @hide="onDialogHide">
-    <q-form ref="formRef" @submit="submitForm">
-      <q-card class="q-dialog-plugin" :style="`min-width:${minWidth[$q.screen.name]}`">
+    <q-card class="q-dialog-plugin" :style="`min-width:${minWidth[$q.screen.name]}`">
+      <q-form ref="formRef" @submit="submit">
         <q-card-actions class="bg-grey-2 text-black">
           <q-toolbar>
             <q-avatar>
@@ -19,7 +19,7 @@
                 color="negative"
                 outline
                 class="q-mx-sm"
-                @click="remove(props.id)"
+                @click="remove"
               />
 
               <q-btn
@@ -44,7 +44,7 @@
         <q-card-section tag="form" class="q-pt-none flex row">
           <responsive-col :col="6">
             <q-input
-              v-model.trim="data.nome"
+              v-model.trim="data.name"
               label="Nome"
               outlined
               class="full-width"
@@ -76,18 +76,17 @@
           </responsive-col>
         </q-card-section>
 
-        <q-card-section class="bg-grey-2 q-pa-md"> </q-card-section>
-      </q-card>
-    </q-form>
+      </q-form>
+    </q-card>
   </q-dialog>
 </template>
 <script setup lang="ts">
-import { QForm, useDialogPluginComponent, useQuasar } from 'quasar';
+import { QForm, QSpinnerHourglass, useDialogPluginComponent, useQuasar } from 'quasar';
 import ResponsiveCol from 'components/layouts/ResponsiveCol.vue';
 import { onMounted, ref } from 'vue';
 import { z } from 'zod';
 import { useAPi } from 'src/composables/useApi';
-import { ApiOutputType } from '@projeto/crud-api';
+import type { ApiInputType, ApiOutputType } from '@projeto/crud-api';
 
 const minWidth = {
   xs: 'unset',
@@ -102,27 +101,35 @@ const { dialogRef, onDialogHide, onDialogOK, onDialogCancel } = useDialogPluginC
 const crudApi = useAPi();
 const formRef = ref<QForm>();
 defineEmits([...useDialogPluginComponent.emits]);
-const props = defineProps<{ id?: number }>();
+
+const props = defineProps<{ id?: ApiInputType['user']['get']['id'] }>();
 
 const data = ref<NonNullable<ApiOutputType['user']['get']>>({
-  id: 0,
+  id: '',
   email: '',
-  nome: '',
+  name: '',
 });
 
 const emailValid = (val: string) => z.string().email().safeParse(val).success;
 
 const loadData = async () => {
   try {
-    if (!props.id) {
-      throw new Error('Id is missing');
+    $q.loading.show({
+      spinner: QSpinnerHourglass,
+      message: 'Carregando informações...',
+    });
+
+    if (props.id) {
+      data.value = await crudApi.user.get.query({ id: props.id });
     }
-
-    const user = await crudApi.user.get.query({ id: props.id });
-
-    data.value = user;
-  } catch (error) {
-    console.log(error);
+  } catch {
+    $q.dialog({
+      title: 'Ocorreu um erro',
+      message: 'Um erro interno ocorreu carregando as informações, tente novamente mais tarde.',
+      color: 'negative',
+    });
+  } finally {
+    $q.loading.hide();
   }
 };
 
@@ -131,30 +138,61 @@ const submitForm = () => {
 };
 
 const create = async () => {
-  await crudApi.user.create.mutate({
-    email: data.value?.email || '',
-    nome: data.value?.nome || '',
+  $q.loading.show({
+    spinner: QSpinnerHourglass,
+    message: 'Salvando...',
   });
 
+  await crudApi.user.create.mutate({
+    email: data.value?.email || '',
+    name: data.value?.name || '',
+  });
+
+  $q.loading.hide();
   onDialogOK();
 };
 
-const remove = async (id: number) => {
-  await crudApi.user.delete.mutate({ id });
+const update = async () => {
+  try {
+    if (!props.id) return;
+    $q.loading.show({
+      spinner: QSpinnerHourglass,
+      message: 'Salvando Alterações...',
+    });
+
+    await crudApi.user.update.mutate({
+      id: props.id,
+      email: data.value?.email || '',
+      name: data.value?.name || '',
+    });
+
+    $q.loading.hide();
+    onDialogOK();
+  } catch {
+    $q.dialog({
+      title: 'Ocorreu um erro',
+      message: 'Um erro interno ocorreu carregando as informações, tente novamente mais tarde.',
+      color: 'negative',
+    });
+  } finally {
+    $q.loading.hide();
+  }
+};
+
+const remove = async () => {
+  await crudApi.user.delete.mutate({ id: props?.id ?? '' });
   onDialogOK();
 };
 
 const submit = () => {
   if (props.id) {
-    return;
+    void update();
   } else {
-    create();
+    void create();
   }
 };
 
 onMounted(() => {
-  if (props.id) {
-    loadData();
-  }
+  void loadData();
 });
 </script>

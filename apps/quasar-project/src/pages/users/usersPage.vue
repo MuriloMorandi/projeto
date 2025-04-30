@@ -44,46 +44,79 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
 import { useAPi } from 'src/composables/useApi';
-import type { ApiOutputType } from '@projeto/crud-api';
-import { useQuasar, type QTableColumn } from 'quasar';
+import type { ApiInputType, ApiOutputType } from '@projeto/crud-api';
+import { useQuasar, type QTableColumn, QSpinnerHourglass } from 'quasar';
 import UsersFormModal from './usersFormModal.vue';
 
+const $q = useQuasar();
 const crudApi = useAPi();
 const loading = ref(false);
 const response = ref<ApiOutputType['user']['list']>();
 
 const loadData = async () => {
-  response.value = await crudApi.user.list.query();
-};
+  try {
+    $q.loading.show({
+      spinner: QSpinnerHourglass,
+      message: 'Carregando informações...',
+    });
 
-const $q = useQuasar();
+    response.value = await crudApi.user.list.query({
+      orderByAsc: true,
+      orderColumn: 'name',
+      page: 0,
+      pageSize: 10,
+      search: '',
+    });
+  } catch {
+    $q.dialog({
+      title: 'Ocorreu um erro',
+      message: 'Um erro interno ocorreu carregando as informações, tente novamente mais tarde.',
+      color: 'negative',
+    });
+  } finally {
+    $q.loading.hide();
+  }
+};
 
 const add = () => {
   $q.dialog({
     component: UsersFormModal,
-  }).onDismiss(async () => {
-    await loadData();
+  }).onDismiss(() => {
+    void loadData();
   });
 };
 
-const edit = (id: number) => {
+const edit = (id: ApiInputType['user']['get']['id']) => {
   $q.dialog({
     component: UsersFormModal,
     componentProps: {
       id,
     },
-  }).onDismiss(async () => {
-    await loadData();
+  }).onDismiss(() => {
+    void loadData();
   });
 };
 
-const remove = async (id: number) => {
-  await crudApi.user.delete.mutate({ id });
-  await loadData();
+const remove = async (id: ApiInputType['user']['delete']['id']) => {
+  try{
+    await crudApi.user.delete.mutate({ id });
+    await loadData();
+  }
+  catch {
+    $q.dialog({
+      title: 'Ocorreu um erro',
+      message:
+        'Um erro interno ocorreu carregando as informações, tente novamente mais tarde.',
+      color: 'negative',
+    });
+  }
+  finally {
+    $q.loading.hide();
+  }
 };
 
-onMounted(async () => {
-  await loadData();
+onMounted(() => {
+  void loadData();
 });
 
 const columns: QTableColumn[] = [
@@ -108,7 +141,7 @@ const columns: QTableColumn[] = [
   {
     name: 'name',
     label: 'Nome',
-    field: (row: ApiOutputType['user']['list']['data'][0]) => row.nome,
+    field: (row: ApiOutputType['user']['list']['data'][0]) => row.name,
     align: 'left',
     sortable: true,
   },
