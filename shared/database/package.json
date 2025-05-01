@@ -1,23 +1,27 @@
 {
-  "name": "@projeto/database",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
+	"name": "@projeto/database",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
-  "scripts": {
-    "build": "tsc",
-    "db:push": "drizzle-kit push",
-    "dbTest:push": "drizzle-kit push --config=drizzle-mock.config.ts",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
-  },
-  "dependencies": {
-    "@libsql/client": "^0.15.4",
-    "drizzle-orm": "^0.42.0",
-    "nanoid": "^5.1.5"
-  },
-  "devDependencies": {
-    "drizzle-kit": "^0.31.0",
-    "typescript": "~5.8.2"
-  }
+	"scripts": {
+		"build": "tsc",
+		"db:push": "drizzle-kit push",
+		"dbTest:push": "drizzle-kit push --config=drizzle-mock.config.ts",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"format": "biome format",
+		"lint": "biome lint",
+		"check": "biome check"
+	},
+	"dependencies": {
+		"@libsql/client": "^0.15.4",
+		"drizzle-orm": "^0.42.0",
+		"nanoid": "^5.1.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"drizzle-kit": "^0.31.0",
+		"typescript": "~5.8.2"
+	}
 }
