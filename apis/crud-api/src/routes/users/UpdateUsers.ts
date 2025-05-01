@@ -1,5 +1,5 @@
 import { and, eq, ne } from 'drizzle-orm';
-import { usersTable } from '../../database/schema';
+import { usersTable } from '@projeto/database';
 import { publicProcedure } from '../../trpc';
 import z from 'zod';
 import { TRPCError } from '@trpc/server';

@@ -1,5 +1,5 @@
 import { and, asc, count, desc, like, or } from 'drizzle-orm';
-import { usersTable } from '../../database/schema';
+import { usersTable } from '@projeto/database';
 import { publicProcedure } from '../../trpc';
 import z from 'zod';
 import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';

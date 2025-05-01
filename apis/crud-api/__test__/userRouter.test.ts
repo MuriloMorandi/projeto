@@ -1,7 +1,6 @@
 import type { ApiOutputType } from './../src/index';
 import type { Context } from '../src/context';
-import { dbTest } from '../src/database';
-import { usersTable } from '../src/database/schema';
+import { dbMock, usersTable } from '@projeto/database';
 import { appRouter } from './../src/router';
 import { describe, it, expect, afterAll, beforeEach, test } from 'vitest';
 import { faker } from '@faker-js/faker';
@@ -13,7 +12,7 @@ type SelectUser = typeof usersTable.$inferSelect;
 
 const createMockContext = () => {
 	return {
-		db: dbTest,
+		db: dbMock,
 	};
 };
 
@@ -431,6 +430,6 @@ describe('userRouter', () => {
 	});
 
 	afterAll(async () => {
-		await dbTest.delete(usersTable).execute();
+		await dbMock.delete(usersTable).execute();
 	});
 });

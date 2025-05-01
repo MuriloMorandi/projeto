@@ -1,4 +1,4 @@
-import { db } from './database';
+import { db } from '@projeto/database';
 
 export const createContext = () => ({
 	db,
