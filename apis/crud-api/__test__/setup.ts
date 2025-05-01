@@ -8,5 +8,5 @@ console.warn(dbPath);
 // Remove o arquivo de testes antes de rodar, caso exista
 if (fs.existsSync(dbPath)) {
 	fs.unlinkSync(dbPath);
-	execSync('pnpm db:push:test', { stdio: 'inherit' });
+	execSync('pnpm db:push', { stdio: 'inherit' });
 }
