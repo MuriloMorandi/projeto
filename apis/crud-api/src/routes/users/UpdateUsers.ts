@@ -12,7 +12,7 @@ export default publicProcedure
 			email: z.string().email(),
 		}),
 	)
-	.query(async ({ ctx: { db }, input }) => {
+	.mutation(async ({ ctx: { db }, input }) => {
 		const [user] = await db
 			.select()
 			.from(usersTable)
