@@ -14,7 +14,8 @@ export default publicProcedure
 		const [user] = await db
 			.select()
 			.from(usersTable)
-			.where(and(eq(usersTable.id, input.id)));
+			.where(and(eq(usersTable.id, input.id)))
+			.limit(1);
 
 		if (!user) {
 			throw new TRPCError({

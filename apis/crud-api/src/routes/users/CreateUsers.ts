@@ -11,7 +11,7 @@ export default publicProcedure
 			email: z.string().email(),
 		}),
 	)
-	.query(async ({ ctx: { db }, input }) => {
+	.mutation(async ({ ctx: { db }, input }) => {
 		const hasEmail = await db.query.usersTable.findFirst({
 			columns: {
 				email: true,

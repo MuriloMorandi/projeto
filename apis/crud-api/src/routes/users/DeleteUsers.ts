@@ -9,7 +9,7 @@ export default publicProcedure
 			id: z.string().nanoid(),
 		}),
 	)
-	.query(async ({ input, ctx: { db } }) => {
+	.mutation(async ({ input, ctx: { db } }) => {
 		const result = await db
 			.delete(usersTable)
 			.where(eq(usersTable.id, input.id));
