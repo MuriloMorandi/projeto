@@ -6,6 +6,7 @@ on:
       - 'apis/crud-api/**'
     branches-ignore:
       - 'master'
+      - 'dev'
 
 jobs:
     build:
