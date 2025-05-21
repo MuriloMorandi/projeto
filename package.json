@@ -2,6 +2,7 @@
   "name": "projeto",
   "scripts": {
     "build": "turbo run build",
+    "app:build": "turbo run app:build",
     "dev": "turbo run dev",
     "test": "turbo run test",
     "test:cov": "turbo run test:cov",

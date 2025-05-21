@@ -6,6 +6,11 @@
         "outputs": ["dist/**"],
         "cache": true
       },
+      "app:build": {
+        "dependsOn": ["^build"],
+        "outputs": ["dist/**"],
+        "cache": true
+      },
       "test": {
          "dependsOn": ["^build"]
       },

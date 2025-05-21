@@ -7,13 +7,14 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "quasar:lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
-    "quasar:format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
+    "app:lint": "eslint -c ./eslint.config.js \"./src*/**/*.{ts,js,cjs,mjs,vue}\"",
+    "app:format": "prettier --write \"**/*.{js,ts,vue,scss,html,md,json}\" --ignore-path .gitignore",
     "dev": "quasar dev",
-    "quasar:build": "quasar build"
+    "app:build": "quasar build"
   },
   "dependencies": {
     "@projeto/crud-api": "workspace:*",
+    "@projeto/utils": "workspace:*",
     "@quasar/extras": "^1.16.4",
     "@tanstack/vue-table": "^8.21.3",
     "@trpc/client": "^11.1.0",
