@@ -1,4 +1,4 @@
-name: Update Repository - CRUD API
+name: Build
 
 on:
   push:
