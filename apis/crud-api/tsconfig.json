@@ -1,16 +1,20 @@
 {
 	"compilerOptions": {
-		"target": "esnext",
-		"module": "NodeNext",
-		"moduleResolution": "NodeNext",
-		"esModuleInterop": true,
-		"strict": true,
-		"outDir": "dist",
-		"skipLibCheck": true,
 		"declaration": true,
-		"declarationMap": true,
-		"isolatedModules": true
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "incremental": false,
+    "isolatedModules": true,
+    "lib": ["es2023"],
+    "module": "NodeNext",
+    "moduleResolution": "node16",
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+	  "outDir": "dist"
 	},
-	"include": ["src", "drizzle.config.ts"],
+	"include": ["src"],
 	"exclude": ["dist", "node_modules"]
 }

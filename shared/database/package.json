@@ -8,12 +8,21 @@
 		"clear": "rm -r dist",
 		"build": "tsc",
 		"db:push": "drizzle-kit push",
-		"dbTest:push": "drizzle-kit push --config=drizzle-mock.config.ts",
 		"db:generate": "drizzle-kit generate",
 		"db:migrate": "drizzle-kit migrate",
 		"format": "biome format",
 		"lint": "biome lint",
 		"check": "biome check"
+	},
+	"exports":{
+		".":{
+			"types":"./dist/index.d.ts",
+			"import":"./dist/index.js" 
+		},
+		"./utils":{
+			"types":"./dist/utils/index.d.ts",
+			"import":"./dist/utils/index.js"
+		}
 	},
 	"dependencies": {
 		"@libsql/client": "^0.15.4",
