@@ -15,5 +15,5 @@ const server = createHTTPServer({
 	createContext: createContext,
 });
 
-console.log(`API(CRUD) rodando na porta: ${3001}`);
-server.listen(3001);
+console.log(`API(CRUD) rodando na porta: ${process.env.PORT || 3001}`);
+server.listen(process.env.PORT || 3001);
