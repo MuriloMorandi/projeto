@@ -15,14 +15,14 @@
 		"lint": "biome lint",
 		"check": "biome check"
 	},
-	"exports":{
-		".":{
-			"types":"./dist/index.d.ts",
-			"import":"./dist/index.js" 
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
 		},
-		"./utils":{
-			"types":"./dist/utils/index.d.ts",
-			"import":"./dist/utils/index.js"
+		"./utils": {
+			"types": "./dist/utils/index.d.ts",
+			"import": "./dist/utils/index.js"
 		}
 	},
 	"dependencies": {

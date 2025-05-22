@@ -1,8 +1,8 @@
-import { and, eq, ne } from 'drizzle-orm';
 import { usersTable } from '@projeto/database';
-import { publicProcedure } from '../../trpc.js';
-import z from 'zod';
 import { TRPCError } from '@trpc/server';
+import { and, eq, ne } from 'drizzle-orm';
+import z from 'zod';
+import { publicProcedure } from '../../trpc.js';
 
 export default publicProcedure
 	.input(

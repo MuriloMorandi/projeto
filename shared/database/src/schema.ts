@@ -11,7 +11,7 @@ export const usersTable = sqliteTable(
 		name: text().notNull(),
 		email: text().unique().notNull(),
 	},
-	(users) => [],
+	(_users) => [],
 );
 
 export const categoriesTable = sqliteTable(
@@ -22,7 +22,7 @@ export const categoriesTable = sqliteTable(
 			.$defaultFn(() => nanoid()),
 		name: text().notNull(),
 	},
-	(categories) => [],
+	(_categories) => [],
 );
 
 export const personalAccountsTable = sqliteTable(
@@ -37,7 +37,7 @@ export const personalAccountsTable = sqliteTable(
 		name: text().notNull(),
 		balance: text().notNull(),
 	},
-	(personalAccounts) => [],
+	(_personalAccounts) => [],
 );
 
 export const personalTransactionsTable = sqliteTable(
@@ -77,7 +77,7 @@ export const organizationTable = sqliteTable(
 		createdAt: integer({ mode: 'timestamp' }).notNull(),
 		updatedAt: integer({ mode: 'timestamp' }).notNull(),
 	},
-	(organizations) => [],
+	(_organizations) => [],
 );
 
 export const organizationMembersTable = sqliteTable(
@@ -90,7 +90,7 @@ export const organizationMembersTable = sqliteTable(
 			.notNull()
 			.references(() => usersTable.id),
 	},
-	(organizationMembers) => [],
+	(_organizationMembers) => [],
 );
 
 export const organizationAccountsTable = sqliteTable(
@@ -105,7 +105,7 @@ export const organizationAccountsTable = sqliteTable(
 		name: text().notNull(),
 		balance: text().notNull(),
 	},
-	(organizationAccounts) => [],
+	(_organizationAccounts) => [],
 );
 
 export const organizationTransactionsTable = sqliteTable(

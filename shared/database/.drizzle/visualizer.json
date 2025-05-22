@@ -1,1 +1,10 @@
-[{"id":"categories","position":{"x":820,"y":-60}},{"id":"organization_accounts","position":{"x":940,"y":600}},{"id":"organization_members","position":{"x":640,"y":400}},{"id":"organizations","position":{"x":240,"y":680}},{"id":"organization_transactions","position":{"x":1370,"y":50}},{"id":"personal_accounts","position":{"x":480,"y":-200}},{"id":"personal_transactions","position":{"x":1380,"y":-360}},{"id":"users","position":{"x":-80,"y":80}}]
+[
+	{ "id": "categories", "position": { "x": 820, "y": -60 } },
+	{ "id": "organization_accounts", "position": { "x": 940, "y": 600 } },
+	{ "id": "organization_members", "position": { "x": 640, "y": 400 } },
+	{ "id": "organizations", "position": { "x": 240, "y": 680 } },
+	{ "id": "organization_transactions", "position": { "x": 1370, "y": 50 } },
+	{ "id": "personal_accounts", "position": { "x": 480, "y": -200 } },
+	{ "id": "personal_transactions", "position": { "x": 1380, "y": -360 } },
+	{ "id": "users", "position": { "x": -80, "y": 80 } }
+]

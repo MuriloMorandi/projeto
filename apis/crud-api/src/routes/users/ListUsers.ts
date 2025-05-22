@@ -1,7 +1,7 @@
-import { and, asc, count, desc, like, or } from 'drizzle-orm';
-import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
 import { usersTable } from '@projeto/database';
 import { withPagination } from '@projeto/database/utils';
+import { and, asc, count, desc, like, or } from 'drizzle-orm';
+import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
 import z from 'zod';
 import { publicProcedure } from '../../trpc.js';
 
@@ -33,24 +33,16 @@ export default publicProcedure
 			.select()
 			.from(usersTable)
 			.where(filters)
-			.orderBy(
-				orderByAsc ?
-					asc(orderDynamicColumn) :
-					desc(orderDynamicColumn)
-			);
+			.orderBy(orderByAsc ? asc(orderDynamicColumn) : desc(orderDynamicColumn));
 
-		const result = await withPagination(
-			query.$dynamic(),
-			page,
-			pageSize
-		);
+		const result = await withPagination(query.$dynamic(), page, pageSize);
 
 		const [dataCount] = await db
 			.select({
 				count: count(),
 			})
 			.from(usersTable)
-			.where(filters)
+			.where(filters);
 
 		return {
 			data: result,

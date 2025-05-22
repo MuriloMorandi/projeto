@@ -1,7 +1,7 @@
-import z from 'zod';
-import { publicProcedure } from '../../trpc.js';
 import { usersTable } from '@projeto/database';
 import { eq } from 'drizzle-orm';
+import z from 'zod';
+import { publicProcedure } from '../../trpc.js';
 
 export default publicProcedure
 	.input(

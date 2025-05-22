@@ -1,8 +1,8 @@
+import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { createHTTPServer } from '@trpc/server/adapters/standalone';
 import cors from 'cors';
-import { appRouter, type AppRouterType } from './router.js';
-import type { inferRouterInputs, inferRouterOutputs } from '@trpc/server';
 import { createContext } from './context.js';
+import { type AppRouterType, appRouter } from './router.js';
 
 export * from './router.js';
 
