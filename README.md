@@ -26,6 +26,10 @@ Este repositório é um monorepo que centraliza múltiplas aplicações e pacote
   ```bash
   pnpm install
   ```
+- Build dos pacotes do projeto:
+  ```bash
+  pnpm build
+  ```
 
 - Rodar a API:
   ```bash

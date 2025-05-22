@@ -6,7 +6,7 @@
 	},
 	"files": {
 		"ignoreUnknown": false,
-		"ignore": ["dist/**"]
+		"ignore": ["dist/**", "migrations/**", "./drizzle/**"]
 	},
 	"formatter": {
 		"enabled": true,

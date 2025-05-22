@@ -1,8 +1,9 @@
+import { usersTable } from '@projeto/database';
+import { withPagination } from '@projeto/database/utils';
 import { and, asc, count, desc, like, or } from 'drizzle-orm';
-import { usersTable } from '../../database/schema';
-import { publicProcedure } from '../../trpc';
-import z from 'zod';
 import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
+import z from 'zod';
+import { publicProcedure } from '../../trpc.js';
 
 export default publicProcedure
 	.input(
@@ -21,37 +22,30 @@ export default publicProcedure
 			usersTable[<keyof typeof usersTable>orderColumn]
 		);
 
-		const data = await db
+		const filters = and(
+			or(
+				like(usersTable.name, `%${input.search ?? ''}%`),
+				like(usersTable.email, `%${input.search ?? ''}%`),
+			),
+		);
+
+		const query = db
 			.select()
 			.from(usersTable)
-			.where(
-				and(
-					or(
-						like(usersTable.name, `%${input.search ?? ''}%`),
-						like(usersTable.email, `%${input.search ?? ''}%`),
-					),
-				),
-			)
-			.orderBy(orderByAsc ? asc(orderDynamicColumn) : desc(orderDynamicColumn))
-			.limit(pageSize)
-			.offset((page - 1) * pageSize);
+			.where(filters)
+			.orderBy(orderByAsc ? asc(orderDynamicColumn) : desc(orderDynamicColumn));
+
+		const result = await withPagination(query.$dynamic(), page, pageSize);
 
 		const [dataCount] = await db
 			.select({
 				count: count(),
 			})
 			.from(usersTable)
-			.where(
-				and(
-					or(
-						like(usersTable.name, `%${input.search ?? ''}%`),
-						like(usersTable.email, `%${input.search ?? ''}%`),
-					),
-				),
-			);
+			.where(filters);
 
 		return {
-			data,
-			count: dataCount.count,
+			data: result,
+			count: dataCount?.count,
 		};
 	});

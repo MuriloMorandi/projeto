@@ -1,0 +1,38 @@
+{
+	"name": "@projeto/database",
+	"version": "1.0.0",
+	"description": "",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"type": "module",
+	"scripts": {
+		"clear": "rm -r dist",
+		"build": "tsc",
+		"db:push": "drizzle-kit push",
+		"db:generate": "drizzle-kit generate",
+		"db:migrate": "drizzle-kit migrate",
+		"format": "biome format",
+		"lint": "biome lint",
+		"check": "biome check"
+	},
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./utils": {
+			"types": "./dist/utils/index.d.ts",
+			"import": "./dist/utils/index.js"
+		}
+	},
+	"dependencies": {
+		"@libsql/client": "^0.15.4",
+		"drizzle-orm": "^0.42.0",
+		"nanoid": "^5.1.5"
+	},
+	"devDependencies": {
+		"@biomejs/biome": "1.9.4",
+		"drizzle-kit": "^0.31.0",
+		"typescript": "~5.8.2"
+	}
+}

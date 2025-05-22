@@ -1,1 +1,1 @@
-export * from './normalizeString';
+export * from './normalizeString.js';

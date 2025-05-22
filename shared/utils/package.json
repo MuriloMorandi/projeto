@@ -2,7 +2,9 @@
 	"name": "@projeto/utils",
 	"version": "1.0.0",
 	"description": "",
+	"type": "module",
 	"scripts": {
+		"clear": "rm -r dist",
 		"test": "vitest",
 		"test:watch": "vitest --watch",
 		"test:cov": "vitest --coverage --reporter=verbose",

@@ -4,7 +4,12 @@
       "build": {
         "dependsOn": ["^build"] ,
         "outputs": ["dist/**"],
-        "cache": false
+        "cache": true
+      },
+      "app:build": {
+        "dependsOn": ["^build"],
+        "outputs": ["dist/**"],
+        "cache": true
       },
       "test": {
          "dependsOn": ["^build"]
