@@ -1,6 +1,6 @@
 import { and, eq, ne } from 'drizzle-orm';
 import { usersTable } from '@projeto/database';
-import { publicProcedure } from '../../trpc';
+import { publicProcedure } from '../../trpc.js';
 import z from 'zod';
 import { TRPCError } from '@trpc/server';
 

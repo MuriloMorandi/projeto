@@ -1,1 +1,1 @@
-export * from './withPagination';
+export * from './withPagination.js';

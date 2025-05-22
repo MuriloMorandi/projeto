@@ -1,9 +1,9 @@
 import { and, asc, count, desc, like, or } from 'drizzle-orm';
-import { usersTable } from '@projeto/database';
-import { publicProcedure } from '../../trpc';
-import z from 'zod';
 import type { SQLiteColumn } from 'drizzle-orm/sqlite-core';
+import { usersTable } from '@projeto/database';
 import { withPagination } from '@projeto/database/utils';
+import z from 'zod';
+import { publicProcedure } from '../../trpc.js';
 
 export default publicProcedure
 	.input(

@@ -1,9 +1,9 @@
-import { router } from './trpc';
-import CreateUsers from './routes/users/CreateUsers';
-import listUsers from './routes/users/ListUsers';
-import UpdateUsers from './routes/users/UpdateUsers';
-import DeleteUsers from './routes/users/DeleteUsers';
-import GetUsers from './routes/users/GetUsers';
+import { router } from './trpc.js';
+import CreateUsers from './routes/users/CreateUsers.js';
+import listUsers from './routes/users/ListUsers.js';
+import UpdateUsers from './routes/users/UpdateUsers.js';
+import DeleteUsers from './routes/users/DeleteUsers.js';
+import GetUsers from './routes/users/GetUsers.js';
 
 export const appRouter = router({
 	user: {

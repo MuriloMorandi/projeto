@@ -1,5 +1,5 @@
 import z from 'zod';
-import { publicProcedure } from '../../trpc';
+import { publicProcedure } from '../../trpc.js';
 import { usersTable } from '@projeto/database';
 import { and, eq } from 'drizzle-orm';
 import { TRPCError } from '@trpc/server';
